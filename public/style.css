@@ -1,0 +1,35 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 40px;
+}
+
+#grid {
+  display: grid;
+  grid-template-columns: repeat(6, 80px);
+  gap: 4px;
+  margin-top: 20px;
+}
+
+.cell {
+  border: 1px solid #333;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header {
+  font-weight: bold;
+  background: #eee;
+}
+
+#dicePool {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.die {
+  padding: 10px 15px;
+  border: 1px solid black;
+}

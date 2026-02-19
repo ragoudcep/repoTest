@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Roll & Write</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+
+    h1, h2 {
+      margin-bottom: 10px;
+    }
+
+    #gameInfo, #actions, #firstDieAction {
+      margin-bottom: 20px;
+    }
+
+    button, select {
+      margin-right: 10px;
+      padding: 5px 10px;
+      font-size: 14px;
+    }
+
+    #dicePool {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .die {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 6px;
+      border: 1px solid #333;
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+
+    .die.BAR { background-color: #f44336; color: white; }
+    .die.cerise { background-color: #ff4d4d; color: white; }
+    .die.cloche { background-color: #ffd700; }
+    .die.prune { background-color: #9932cc; color: white; }
+    .die.citron { background-color: #ffff66; }
+    .die.orange { background-color: #ff9900; }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(6, 60px);
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+
+    .cell {
+      border: 1px solid #333;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .header { background: #eee; }
+
+    #malus {
+      margin-bottom: 20px;
+      min-height: 30px;
+    }
+
+    #score {
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Roll & Write</h1>
+
+  <div id="gameInfo">
+    <div>Manche : <span id="round">1</span>/12</div>
+    <div>Dés restants : <span id="bowl">9</span></div>
+  </div>
+  
+
+  <div id="firstDieAction">
+    <select id="firstDieSelect"></select>
+    <button id="placeFirstDieBtn">Placer premier dé</button>
+  </div>
+
+  <button id="bonusBtn">Utiliser un bonus</button>
+<span>Bonus restants : <span id="bonusRemaining">5</span></span>
+
+
+  <div id="actions">
+    <button id="startBtn">Nouvelle partie</button>
+    <button id="rollBtn">Lancer un dé</button>
+    <select id="fruitSelect"></select>
+    <button id="exitBtn">Sortir</button>
+  </div>
+
+  <h2>Dés en jeu</h2>
+  <div id="dicePool"></div>
+
+  <h2>Grille</h2>
+  <div id="grid"></div>
+
+  <h2>Zone Malus</h2>
+  <div id="malus"></div>
+
+  <h2>Score Final</h2>
+  <div id="score"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
