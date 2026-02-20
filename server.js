@@ -28,6 +28,7 @@ function createNewGame() {
     },
     malus: [],
     finished: false,
+    barCount: 0,
     bonusRemaining: MAX_BONUS,
   };
 }
@@ -72,13 +73,21 @@ app.post("/api/roll", (req, res) => {
   gameState.bowlRemaining--;
 
   if (die === "BAR") {
-    gameState.malus.push(gameState.round);
+    // compter les BAR dans la manche
+    gameState.dicePool.push("BAR");
+    gameState.barCount = (gameState.barCount || 0) + 1;
 
-    // Manche terminée
-    gameState.dicePool = [];
-    gameState.bowlRemaining = 9;
-    gameState.round++;
-    if (gameState.round > gameState.maxRounds) gameState.finished = true;
+    // n'interrompt la manche qu'à 2 BAR cumulés
+    if (gameState.barCount >= 2) {
+      gameState.malus.push(gameState.round);
+
+      // Manche terminée
+      gameState.dicePool = [];
+      gameState.bowlRemaining = 9;
+      gameState.round++;
+      gameState.barCount = 0;
+      if (gameState.round > gameState.maxRounds) gameState.finished = true;
+    }
 
     return res.json(gameState);
   }
@@ -90,6 +99,7 @@ app.post("/api/roll", (req, res) => {
   if (gameState.bowlRemaining === 0) {
     gameState.dicePool = [];
     gameState.bowlRemaining = 9;
+    gameState.barCount = 0;
     gameState.round++;
     if (gameState.round > gameState.maxRounds) gameState.finished = true;
   }
@@ -107,18 +117,19 @@ app.post("/api/exit", (req, res) => {
     return res.status(400).json({ error: "Fruit invalide" });
 
   const diceCount = gameState.dicePool.filter(d => d === fruit).length;
-  let valueToAdd = gameState.round; // numéro de manche
-  const bonusTable = { 2: 1, 3: 2, 4: 3, 5: 4, 6: 5 };
-  if (diceCount >= 2) valueToAdd += bonusTable[diceCount] || 0;
 
+  // Si au moins un dé de ce fruit -> inscrire la valeur
   if (diceCount > 0) {
-    const lineIndex = diceCount - 1;
+    const lineIndex = diceCount - 1; // 0 = première ligne, 1 = deuxième, ...
+    const multiplier = lineIndex + 1; // deuxième ligne x2, troisième x3, etc.
+    const valueToAdd = gameState.round * multiplier;
     gameState.grid[fruit][lineIndex] = valueToAdd;
   }
 
   // Reset pour manche suivante
   gameState.dicePool = [];
   gameState.bowlRemaining = 9;
+  gameState.barCount = 0;
   gameState.round++;
   if (gameState.round > gameState.maxRounds) gameState.finished = true;
 
@@ -167,18 +178,16 @@ app.get("/api/state", (req, res) => res.json(gameState));
 // --- Score final ---
 app.get("/api/score", (req, res) => {
   if (!gameState) return res.json({ score: 0 });
-
+  // Addition simple des cases remplies
   let positive = 0;
   FRUITS.forEach(fruit => {
     const col = gameState.grid[fruit].filter(v => v !== null);
     const sum = col.reduce((a, b) => a + b, 0);
-    positive += sum * col.length;
+    positive += sum;
   });
 
-  const negative =
-    gameState.malus.length > 0
-      ? gameState.malus.reduce((acc, val) => acc * val, 1)
-      : 0;
+  // Les malus sont soustraits par somme (pas produit)
+  const negative = gameState.malus.length > 0 ? gameState.malus.reduce((a, b) => a + b, 0) : 0;
 
   const score = positive - negative;
   res.json({ score });

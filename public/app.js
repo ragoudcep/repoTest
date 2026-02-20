@@ -7,7 +7,6 @@ const gridEl = document.getElementById("grid");
 const malusEl = document.getElementById("malus");
 const scoreEl = document.getElementById("score");
 const fruitSelect = document.getElementById("fruitSelect");
-const firstDieSelect = document.getElementById("firstDieSelect");
 const bonusRemainingEl = document.getElementById("bonusRemaining");
 
 // remplir selects
@@ -16,11 +15,6 @@ fruits.forEach(f => {
   option1.value = f;
   option1.textContent = f;
   fruitSelect.appendChild(option1);
-
-  const option2 = document.createElement("option");
-  option2.value = f;
-  option2.textContent = f;
-  firstDieSelect.appendChild(option2);
 });
 
 function createCell(content, extraClass = "") {
@@ -79,16 +73,7 @@ async function refreshState() {
 
 // --- boutons ---
 
-// placer premier dé
-document.getElementById("placeFirstDieBtn").onclick = async () => {
-  const fruit = firstDieSelect.value;
-  await fetch("/api/place-first", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ fruit })
-  });
-  refreshState();
-};
+// Le mécanisme du premier dé a été retiré : on commence direct par un lancer
 
 // nouvelle partie
 document.getElementById("startBtn").onclick = async () => {
